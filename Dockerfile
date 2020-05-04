@@ -41,7 +41,6 @@ RUN apk add --update  bash \
                       php-opcache \
                       php-mbstring \
                       php-memcached \
-                      php-mcrypt \
                       php-mysqlnd \
                       php-mysqli \
                       php-pcntl \
