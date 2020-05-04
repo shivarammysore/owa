@@ -74,7 +74,7 @@ RUN apk add --update  bash \
 # RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 RUN curl -L -o /usr/share/nginx/html/owa/owa.tar -k https://github.com/Open-Web-Analytics/Open-Web-Analytics/releases/download/1.6.8/owa_1.6.8_packaged.tar \
-    && tax -xvf /usr/share/nginx/html/owa/owa.tar -C /usr/share/nginx/html/owa/ \
+    && tar -xvf /usr/share/nginx/html/owa/owa.tar -C /usr/share/nginx/html/owa/ \
     && rm -f /usr/share/nginx/html/owa/owa.tar
 
 ## To send web server logs ...
