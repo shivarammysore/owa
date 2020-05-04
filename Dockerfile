@@ -18,7 +18,7 @@ RUN apk add --update  bash \
                       git \
                       libmemcached-libs \
                       libevent \
-                      libssl1.0 \
+                      libssl1.1 \
                       musl \
                       nodejs \
                       nodejs-npm \
