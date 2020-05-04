@@ -1,6 +1,6 @@
 FROM nginx:1.18.0-alpine
 LABEL MAINTAINER="Shivaram Mysore <shivaram.mysore@gmail.com>" \
-      DESCRIPTION="Container with Nginx, PHP7.4 fpm, Composer, Open Web Analytics"
+      DESCRIPTION="Container with Nginx, php.4 fpm, Composer, Open Web Analytics"
 
 # trust this project public key to trust the packages.
 ADD https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
@@ -24,50 +24,49 @@ RUN apk add --update  bash \
                       nodejs-npm \
                       openssl  \
                       openssh-client \
-                      php7 \
-                      php7-apcu \
-                      php7-bcmath \
-                      php7-bz2 \
-                      php7-ctype \
-                      php7-curl \
-                      php7-dom \
-                      php7-fileinfo \
-                      php7-fpm \
-                      php7-gd \
-                      php7-iconv \
-                      php7-intl \
-                      php7-json \
-                      php7-openssl \
-                      php7-opcache \
-                      php7-mbstring \
-                      php7-memcached \
-                      php7-mcrypt \
-                      php7-mysqlnd \
-                      php7-mysqli \
-                      php7-pcntl \
-                      php7-pgsql \
-                      php7-pdo \
-                      php7-pdo_mysql \
-                      php7-pdo_pgsql \
-                      php7-pdo_sqlite \
-                      php7-phar \
-                      php7-posix \
-                      php7-session \
-                      php7-simplexml \
-                      php7-sqlite3 \
-                      php7-soap \
-                      php7-sockets \
-                      php7-tokenizer \
-                      php7-xml \
-                      php7-xmlreader \
-                      php7-xmlwriter \
-                      php7-zip \
-                      php7-zlib \
+                      php \
+                      php-apcu \
+                      php-bcmath \
+                      php-bz2 \
+                      php-ctype \
+                      php-curl \
+                      php-dom \
+                      php-fileinfo \
+                      php-fpm \
+                      php-gd \
+                      php-iconv \
+                      php-intl \
+                      php-json \
+                      php-openssl \
+                      php-opcache \
+                      php-mbstring \
+                      php-memcached \
+                      php-mcrypt \
+                      php-mysqlnd \
+                      php-mysqli \
+                      php-pcntl \
+                      php-pgsql \
+                      php-pdo \
+                      php-pdo_mysql \
+                      php-pdo_pgsql \
+                      php-pdo_sqlite \
+                      php-phar \
+                      php-posix \
+                      php-session \
+                      php-simplexml \
+                      php-sqlite3 \
+                      php-soap \
+                      php-sockets \
+                      php-tokenizer \
+                      php-xml \
+                      php-xmlreader \
+                      php-xmlwriter \
+                      php-zip \
+                      php-zlib \
                       supervisor \
                       tzdata \
                       wget \
                       yaml && \
-    ln -s /usr/bin/php7 /usr/bin/php && \
     rm -rf /var/cache/apk/*          && \
     mkdir -p /usr/share/nginx/html/owa
     #rm -f /etc/nginx/nginx.conf      && \
