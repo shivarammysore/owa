@@ -63,27 +63,24 @@ RUN apk add --update  bash \
                       wget \
                       yaml && \
     rm -rf /var/cache/apk/*              && \
-    mkdir -p /usr/share/nginx/html/owa   && \
+    # Setup document root
+    mkdir -p /usr/share/owa              && \
     mkdir -p /etc/supervisor/conf.d/     && \
-    rm -f /etc/nginx/nginx.conf          && \
+    # Remove default server definition
     rm -f /etc/nginx/conf.d/default.conf
 
 
 RUN ln -s /usr/bin/php7 /usr/bin/php
 
-COPY config/etc/environment /etc/
-COPY config/etc/nginx/ /etc/nginx/
-COPY config/etc/php7 /etc/php7/
-COPY config/etc/supervisor/ /etc/supervisor/
+# Configure nginx
+COPY config/nginx.conf /etc/nginx/nginx.conf
 
-# RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+# Configure PHP-FPM
+COPY config/fpm-pool.conf /etc/php7/php-fpm.d/www.conf
+COPY config/php.ini /etc/php7/conf.d/www.ini
 
-RUN curl -L -o /usr/share/nginx/html/owa/owa.tar -k https://github.com/Open-Web-Analytics/Open-Web-Analytics/releases/download/1.6.8/owa_1.6.8_packaged.tar \
-    && tar -xvf /usr/share/nginx/html/owa/owa.tar -C /usr/share/nginx/html/owa/ \
-    && rm -f /usr/share/nginx/html/owa/owa.tar
-
-## Test PHP - Remove later
-RUN echo '<?php phpinfo();' >/usr/share/nginx/html/owa/info.php
+# Configure supervisord
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ## To send web server logs ...
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
@@ -94,13 +91,29 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 # www-data group to have access to files and services.
 # Create www-app user
 # RUN adduser -D -u 1000 -G www-data www-app
-## RUN adduser -D -u 1000 www-app
+RUN adduser -D -u 1000 www-app
 
+# Add application
+RUN curl -L -o /usr/share/owa/owa.tar -k https://github.com/Open-Web-Analytics/Open-Web-Analytics/releases/download/1.6.8/owa_1.6.8_packaged.tar \
+    && tar -xvf /usr/share/owa/owa.tar -C /usr/share/owa/ \
+    && rm -f /usr/share/owa/owa.tar
+
+RUN echo '<?php phpinfo();?>' >/usr/share/owa/info.php
+
+#COPY src/ /usr/share/owa/
+RUN chown -R www-app:www-app /usr/share/owa
+
+
+# Switch to use a non-root user from here on
 USER root
 
-RUN apk del coreutils
+#RUN apk del coreutils
 
-EXPOSE 8084
+# Expose the port nginx is reachable on
+EXPOSE 8080
 
-#CMD [ "nginx" "-g" "daemon on;" ]
-CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+# Let supervisord start nginx & php-fpm
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+# Configure a healthcheck to validate that everything is up&running
+HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
