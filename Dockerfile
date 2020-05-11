@@ -66,10 +66,16 @@ RUN apk add --update  bash \
                       tzdata \
                       wget \
                       yaml && \
-    rm -rf /var/cache/apk/*          && \
-    mkdir -p /usr/share/nginx/html/owa
-    #rm -f /etc/nginx/nginx.conf      && \
-    #rm -f /etc/nginx/conf.d/default.conf
+    rm -rf /var/cache/apk/*              && \
+    mkdir -p /usr/share/nginx/html/owa   && \
+    mkdir -p /etc/supervisor/conf.d/     && \
+    rm -f /etc/nginx/nginx.conf          && \
+    rm -f /etc/nginx/conf.d/default.conf
+
+COPY config/etc/environment /etc/
+COPY config/etc/nginx/ /etc/nginx/
+COPY config/etc/php7 /etc/php7/
+COPY config/etc/supervisor/ /etc/supervisor/
 
 # RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
@@ -77,12 +83,23 @@ RUN curl -L -o /usr/share/nginx/html/owa/owa.tar -k https://github.com/Open-Web-
     && tar -xvf /usr/share/nginx/html/owa/owa.tar -C /usr/share/nginx/html/owa/ \
     && rm -f /usr/share/nginx/html/owa/owa.tar
 
+## Test PHP - Remove later
+RUN echo '<?php phpinfo();' >/usr/share/nginx/html/owa/info.php
+
 ## To send web server logs ...
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 
+# www-data is the group and user that php-fpm uses.  It is a system account
+# hence we create www-app user with UID 1000 so that it can run as user but, in
+# www-data group to have access to files and services.
+# Create www-app user
+# RUN adduser -D -u 1000 -G www-data www-app
+## RUN adduser -D -u 1000 www-app
+
 RUN apk del coreutils
 
-#EXPOSE 8084
+EXPOSE 8084
 
 #CMD [ "nginx" "-g" "daemon on;" ]
+CMD /usr/share/sfservices/init.sh && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
