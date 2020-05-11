@@ -100,7 +100,7 @@ USER root
 
 RUN apk del coreutils
 
-#EXPOSE 8084
+EXPOSE 8084
 
 #CMD [ "nginx" "-g" "daemon on;" ]
 CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
