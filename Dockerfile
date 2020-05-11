@@ -102,4 +102,4 @@ RUN apk del coreutils
 EXPOSE 8084
 
 #CMD [ "nginx" "-g" "daemon on;" ]
-CMD /usr/share/sfservices/init.sh && exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
