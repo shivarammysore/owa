@@ -31,7 +31,6 @@ RUN apk add --update  bash \
                       php-ctype \
                       php-curl \
                       php-dom \
-                      php-fileinfo \
                       php-fpm \
                       php-gd \
                       php-iconv \
@@ -52,14 +51,11 @@ RUN apk add --update  bash \
                       php-phar \
                       php-posix \
                       php-session \
-                      php-simplexml \
                       php-sqlite3 \
                       php-soap \
                       php-sockets \
-                      php-tokenizer \
                       php-xml \
                       php-xmlreader \
-                      php-xmlwriter \
                       php-zip \
                       php-zlib \
                       supervisor \
@@ -71,6 +67,9 @@ RUN apk add --update  bash \
     mkdir -p /etc/supervisor/conf.d/     && \
     rm -f /etc/nginx/nginx.conf          && \
     rm -f /etc/nginx/conf.d/default.conf
+
+
+RUN ln -s /usr/bin/php7 /usr/bin/php
 
 COPY config/etc/environment /etc/
 COPY config/etc/nginx/ /etc/nginx/
@@ -97,9 +96,11 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 # RUN adduser -D -u 1000 -G www-data www-app
 ## RUN adduser -D -u 1000 www-app
 
+USER root
+
 RUN apk del coreutils
 
-EXPOSE 8084
+#EXPOSE 8084
 
 #CMD [ "nginx" "-g" "daemon on;" ]
 CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
